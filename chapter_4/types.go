@@ -39,7 +39,9 @@ func (m Binary) WriteTo(w io.Writer) (int64, error) {
 
 	var n int64 = 1
 	err = binary.Write(w, binary.BigEndian, uint32(len(m))) // 4-byte size
-
+	if err != nil {
+		return n, err
+	}
 	n += 4
 
 	o, err := w.Write(m) // payload
@@ -136,7 +138,7 @@ func (s *String) ReadFrom(r io.Reader) (int64, error) {
 
 // end
 
-func decoder(r io.Reader) (Payload, error) {
+func decode(r io.Reader) (Payload, error) {
 	var typ uint8
 	err := binary.Read(r, binary.BigEndian, &typ)
 	if err != nil {
